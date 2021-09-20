@@ -1,0 +1,16 @@
+# ignore matab save files 
+*.m~
+
+#ignore .png images
+*.png
+
+#ignore .mat files
+*.mat
+
+#ignore saved networks
+*.pth
+
+#ignore npz files
+*.npz
+
+
