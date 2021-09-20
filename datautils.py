@@ -4,6 +4,19 @@ import os
 import itertools
 
 def ext3Dpatch(data, blck, strd):
+    """
+    Function to extract 3D patches or subvolumes from an input volume given subvolume size and stride
+    Parameters
+    ----------
+    data : input 3D volume (np float) from which patches are to be extracted
+    blck : list of subvolume dimensions
+    strd : list of strides along corresponding dimensions
+
+    Returns
+    -------
+    data6 : view into data with specified block sizes and stride (numpy volume)
+
+    """
     sh = np.array(data.shape)
     blck = np.asanyarray(blck)
     strd = np.asanyarray(strd)
@@ -14,12 +27,61 @@ def ext3Dpatch(data, blck, strd):
     return data6#.reshape(-1, *blck)
 
 def load_walnutdata_raw(path,fname):
+    """
+    Function to load a walnut volume from prescribed subvolumes
+
+    Parameters
+    ----------
+    path : path to walnut (string)
+    fname : walnut file name (string)
+
+    Returns
+    -------
+    numpy array containing the walnut image volume
+
+    """
     return np.fromfile(os.path.join(path,fname),
                        dtype='float64').astype('float32')
 
 
 def load_test_data(wal_num=3,lvl_num=1,
                    lenz=352,lenx=296,leny=400,frac=0.5,blck=[32,32,32],strd=[1,1,1],half='top',depth_z=31):
+    """
+    Function to extract 3D patches from input walnut volumes (streaked and ground truth) at test time, across stages of the extreme LV recon algorithm 
+
+    Parameters
+    ----------
+    wal_num : int, optional
+        walnut identifier. The default is 3.
+    lvl_num : int, optional
+        stage identifier. The default is 1.
+    lenz : int, optional
+        z-dimension of subvolume for patch extraction. The default is 352.
+    lenx : int, optional
+        x-dimension of subvolume for patch extraction. The default is 296.
+    leny : int, optional
+        y-dimension of subvolume for patch extraction. The default is 400.
+    frac : float, optional
+        split for train-test (now obsolete). The default is 0.5.
+    blck : list, optional
+        blocksize for patch extraction. The default is [32,32,32].
+    strd : list, optional
+        stride for patch extraction. The default is [1,1,1].
+    half : string, optional
+        top or bottom half for input volume. The default is 'top'.
+    depth_z : int, optional
+        For the depth of the walnut half when top or bottom not specified (now obsolete). The default is 31.
+
+    Returns
+    -------
+    input walnut volume from previous stage
+    ground truth numpy array volume corresponding to input
+    sub_blocks_lv : 
+        input (FDK or previous stage DC output) numpy array for training subvolumes
+    ixs : list of integers for input volume indices.
+
+    """
+    
     flg=0
     if lvl_num>1:
         flg=1
@@ -85,6 +147,41 @@ if __name__ == "__main__":
 
 def load_small_batch_data(nData=500000,wal_num=1,lvl_num=1,
                     lenz=352,lenx=296,leny=400,blck=[8,500,500],strd=[1,1,1],half='top'):
+    """
+    Function to extract 3D patches from input walnut volumes (streaked and ground truth) at training time, 
+    across stages of the extreme LV recon algorithm 
+
+
+    Parameters
+    ----------
+    nData : int, optional
+        number of 3D subvolumes/ training pairs. The default is 500000.
+    wal_num : int, optional
+        identifier for walnut. The default is 1.
+    lvl_num : int, optional
+        identiier for the stage. The default is 1.
+    lenz : int, optional
+        z-dimension of subvolume for patch extraction. The default is 352.
+    lenx : int, optional
+        x-dimension of subvolume for patch extraction. The default is 296.
+    leny : int, optional
+        y-dimension of subvolume for patch extraction. The default is 400.
+    blck : list, optional
+        blocksize for patch extraction. The default is [32,32,32].
+    strd : list, optional
+        stride for patch extraction. The default is [1,1,1].
+    half : string, optional
+        top or bottom half for input volume. The default is 'top'.
+        
+        
+    Returns
+    -------
+    sub_blocks_tru : ground truth (full view) numpy array for training subvolumes
+        DESCRIPTION.
+    sub_blocks_lv : input (FDK or previous stage DC output) numpy array for training subvolumes
+    ixs : list of integers for input volume and corresponding ground truth indices.
+    
+    """
     flg=0
     if lvl_num>1:
         flg=1
