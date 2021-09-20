@@ -1,0 +1,40 @@
+{% set name = "pkbar" %}
+{% set version = "0.4" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: d6ed0508f130d679814b0ec82a605cf69f1734657133ed350a51cd0a06460840
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - numpy
+    - pip
+    - python
+  run:
+    - numpy
+    - python
+
+test:
+  imports:
+    - pkbar
+
+about:
+  home: "https://github.com/yueyericardo/pkbar"
+  license: Apache 2.0
+  license_family: APACHE
+  license_file: 
+  summary: "Keras Progress Bar for PyTorch"
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - your-github-id-here
